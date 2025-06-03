@@ -65,7 +65,9 @@ main {
 
 .hero-section h2 {
   color: #2c3e50;
+  font-family: 'Times New Roman', Times, serif;
 }
+
 
 .features-section {
   width: 100%;
@@ -93,7 +95,7 @@ footer {
   margin-top: auto;
 }
 
-/* Custom button styles */
+/*button*/
 .btn-primary {
   background-color: #0a5e9a;
   border-color: #007bff;
@@ -114,11 +116,12 @@ footer {
   }
 }
 
-/* Header Styles */
+/* Header*/
 .header {
   background-color: #90c4e9;
   position: sticky;
   top: 0;
+  
   
 }
 
