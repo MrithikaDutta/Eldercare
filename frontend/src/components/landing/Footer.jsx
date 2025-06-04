@@ -10,8 +10,8 @@ const Footer = () => {
             <p>Providing quality care for your loved ones.</p>
           </div>
           <div className="col-md-6 text-md-end">
-            <p>Contact: (555) 123-4567</p>
-            <p>Email: info@eldercarecompanion.com</p>
+            <p>Contact: </p>
+            <p>Email: </p>
           </div>
         </div>
       </Container>
