@@ -1,0 +1,5 @@
+/* Enforce left-alignment for form labels */
+.auth-form .form-label {
+  width: 100%;
+  text-align: left !important;
+} 

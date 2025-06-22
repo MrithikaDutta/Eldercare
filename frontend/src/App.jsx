@@ -3,8 +3,8 @@ import './App.css'
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Landing from './screens/Landing';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import LoginPage from './screens/LoginPage';
+import SignupPage from './screens/SignupPage';
 
 const App = () => {
   return (

@@ -1,45 +1,58 @@
-import { Container } from 'react-bootstrap'
+import { Container, Card, Row, Col } from 'react-bootstrap';
+import { Person, Heart, JournalMedical } from 'react-bootstrap-icons';
 
 const Services = () => {
   return (
-    <section className="features-section py-5 bg-light">
+    <section id="services" className="py-5 bg-light">
       <Container>
-        <h2 className="text-center mb-5">Our Services</h2>
-        <div className="row g-4">
-          <div className="col-md-4">
-            <div className="card h-100">
-              <div className="card-body">
-                <h3 className="card-title h5">Personal Care</h3>
-                <p className="card-text">
-                  Assistance with daily activities and personal hygiene needs.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card h-100">
-              <div className="card-body">
-                <h3 className="card-title h5">Companionship</h3>
-                <p className="card-text">
-                  Meaningful social interaction and emotional support.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card h-100">
-              <div className="card-body">
-                <h3 className="card-title h5">Medical Support</h3>
-                <p className="card-text">
-                  Medication reminders and basic health monitoring.
-                </p>
-              </div>
-            </div>
-          </div>
+        <div className="text-center mb-5">
+          <h2 className="fw-bold">Our Services</h2>
+          <p className="lead text-muted">A range of services to meet the needs of your loved ones.</p>
         </div>
+        <Row className="g-4">
+          <Col md={4}>
+            <Card className="h-100 shadow-sm border-0 text-center">
+              <Card.Body>
+                <div className="mb-3">
+                  <Person size={50} className="text-primary" />
+                </div>
+                <Card.Title className="h5">Personal Care</Card.Title>
+                <Card.Text>
+                  Assistance with daily activities and personal hygiene needs.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card className="h-100 shadow-sm border-0 text-center">
+              <Card.Body>
+                <div className="mb-3">
+                  <Heart size={50} className="text-primary" />
+                </div>
+                <Card.Title className="h5">Companionship</Card.Title>
+                <Card.Text>
+                  Meaningful social interaction and emotional support.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={4}>
+            <Card className="h-100 shadow-sm border-0 text-center">
+              <Card.Body>
+                <div className="mb-3">
+                  <JournalMedical size={50} className="text-primary" />
+                </div>
+                <Card.Title className="h5">Medical Support</Card.Title>
+                <Card.Text>
+                  Medication reminders and basic health monitoring.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </Container>
     </section>
-  )
-}
+  );
+};
 
-export default Services 
+export default Services; 
