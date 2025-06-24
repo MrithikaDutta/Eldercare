@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
     'corsheaders',
     'rest_framework',
-
+    'rest_framework_simplejwt.token_blacklist',
 
 ]
 
@@ -127,7 +128,24 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# CORS settings
-# CORS_ALLOWED_ORIGINS = 
+# Django REST Framework settings (optional, but recommended)
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
+# CORS settings (already present)
 CORS_ALLOW_ALL_ORIGINS = True  # For development only!
+
+SIMPLE_JWT = {
+    'USER_ID_FIELD': 'id',  # Use 'id', not 'user_id'
+}
+
+AUTH_USER_MODEL = 'users.User'

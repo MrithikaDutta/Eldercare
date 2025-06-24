@@ -1,25 +1,18 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.utils import timezone
-from django.contrib.auth.hashers import make_password, check_password
 
-# Create your models here.
-
-class User(models.Model):
+class User(AbstractUser):
     USER_TYPE_CHOICES = [
         ('customer', 'Customer'),
         ('provider', 'Provider'),
     ]
-    user_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    password_hash = models.CharField(max_length=255)
-    phone = models.CharField(max_length=20)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
-    created_at = models.DateTimeField(auto_now_add=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    # Remove user_id, name, email, password_hash, created_at fields
+    # AbstractUser already provides id, username, email, password, date_joined, etc.
 
     def __str__(self):
-        return f"{self.name} ({self.user_type})"
+        return f"{self.username} ({self.user_type})"
 
 class ElderProfile(models.Model):
     elder_id = models.AutoField(primary_key=True)
