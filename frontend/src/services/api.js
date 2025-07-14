@@ -1,34 +1,36 @@
+import axios from 'axios';
+
 const API_BASE_URL = 'http://localhost:8000/api';
 
 // API service for making HTTP requests
 class ApiService {
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
+    const token = localStorage.getItem('access_token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
     };
 
-    // Add auth token if available
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
     try {
-      const response = await fetch(url, config);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.detail || data.error || 'Something went wrong');
+      const response = await axios({
+        url,
+        method: options.method || 'GET',
+        headers,
+        data: options.body ? JSON.parse(options.body) : undefined,
+      });
+
+      // If response has no content, return null
+      if (response.status === 204 || !response.data) {
+        return null;
       }
-      
-      return data;
+      return response.data;
     } catch (error) {
-      console.error('API Error:', error);
+      // Axios error handling
+      if (error.response && error.response.data) {
+        throw new Error(error.response.data.detail || error.response.data.error || 'Something went wrong');
+      }
       throw error;
     }
   }
