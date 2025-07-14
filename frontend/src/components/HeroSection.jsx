@@ -1,28 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import LoginForm from './auth/LoginForm';
-import RegisterForm from './auth/RegisterForm';
 import '../styles/HeroSection.css'; 
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [authType, setAuthType] = useState('customer');
 
   const handleFindCompanion = () => {
-    setAuthType('customer');
-    setShowRegisterModal(true);
+    navigate('/customer');
   };
 
   const handleBecomeCompanion = () => {
-    setAuthType('provider');
-    setShowRegisterModal(true);
+    navigate('/provider');
   };
 
   return (
-    <>
+    <section
       <section
         id="hero"
         className="hero-section d-flex align-items-center section-animated"
@@ -59,21 +51,6 @@ const HeroSection = () => {
           </div>
         </div>
       </section>
-      
-      {showLoginModal && (
-        <LoginForm 
-          userType={authType} 
-          onClose={() => setShowLoginModal(false)} 
-        />
-      )}
-      
-      {showRegisterModal && (
-        <RegisterForm 
-          userType={authType} 
-          onClose={() => setShowRegisterModal(false)} 
-        />
-      )}
-    </>
   );
 };
 

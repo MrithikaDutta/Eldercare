@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginForm from './auth/LoginForm';
-import RegisterForm from './auth/RegisterForm';
 
 const sections = [
   { id: 'hero', label: 'Home' },
@@ -13,9 +11,6 @@ const sections = [
 const Navbar = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('hero');
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
-  const [authType, setAuthType] = useState('customer');
 
   // Smooth scroll to section
   const scrollToSection = (id) => {
@@ -43,13 +38,16 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handlePortalClick = (type) => {
-    setAuthType(type);
-    setShowLoginModal(true);
+  const handleCustomerPortal = () => {
+    navigate('/customer');
+  };
+
+  const handleProviderPortal = () => {
+    navigate('/provider');
   };
 
   return (
-    <>
+    <nav
       <nav
         className="navbar navbar-expand-lg shadow-sm"
         style={{
@@ -98,13 +96,13 @@ const Navbar = () => {
             <div className="d-flex ms-lg-4 mt-3 mt-lg-0">
               <button
                 className="btn portal-btn mx-2"
-                onClick={() => handlePortalClick('customer')}
+                onClick={handleCustomerPortal}
               >
                 Customer Portal
               </button>
               <button
                 className="btn portal-btn mx-2"
-                onClick={() => handlePortalClick('provider')}
+                onClick={handleProviderPortal}
               >
                 Provider Portal
               </button>
@@ -112,21 +110,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      
-      {showLoginModal && (
-        <LoginForm 
-          userType={authType} 
-          onClose={() => setShowLoginModal(false)} 
-        />
-      )}
-      
-      {showRegisterModal && (
-        <RegisterForm 
-          userType={authType} 
-          onClose={() => setShowRegisterModal(false)} 
-        />
-      )}
-    </>
   );
 };
 
