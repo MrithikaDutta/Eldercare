@@ -14,7 +14,6 @@ const HeroSection = () => {
   };
 
   return (
-    <section
       <section
         id="hero"
         className="hero-section d-flex align-items-center section-animated"
@@ -51,7 +50,6 @@ const HeroSection = () => {
           </div>
         </div>
       </section>
-  )
   );
 };
 
