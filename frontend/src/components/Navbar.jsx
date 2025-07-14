@@ -48,68 +48,67 @@ const Navbar = () => {
 
   return (
     <nav
-      <nav
-        className="navbar navbar-expand-lg shadow-sm"
-        style={{
-          backgroundColor: 'var(--primary)',
-          color: '#005acd',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-        }}
-      >
-        <div className="container">
-          <span
-            className="navbar-brand fw-bold"
-            style={{ cursor: 'pointer', color: '#fff', fontSize: '1.5rem' }}
-            onClick={() => navigate('/')}
-          >
-            Eldercare
-          </span>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            style={{ borderColor: '#fff' }}
-          >
-            <span className="navbar-toggler-icon" style={{ filter: 'invert(1)' }}></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-              {sections.map((section) => (
-                <li className="nav-item" key={section.id}>
-                  <span
-                    className={`nav-link nav-animated-link${activeSection === section.id ? ' active' : ''}`}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => scrollToSection(section.id)}
-                  >
-                    {section.label}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {/* Add spacing between navlinks and buttons */}
-            <div className="d-flex ms-lg-4 mt-3 mt-lg-0">
-              <button
-                className="btn portal-btn mx-2"
-                onClick={handleCustomerPortal}
-              >
-                Customer Portal
-              </button>
-              <button
-                className="btn portal-btn mx-2"
-                onClick={handleProviderPortal}
-              >
-                Provider Portal
-              </button>
-            </div>
+      className="navbar navbar-expand-lg shadow-sm"
+      style={{
+        backgroundColor: 'var(--primary)',
+        color: '#005acd',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+      }}
+    >
+      <div className="container">
+        <span
+          className="navbar-brand fw-bold"
+          style={{ cursor: 'pointer', color: '#fff', fontSize: '1.5rem' }}
+          onClick={() => navigate('/')}
+        >
+          Eldercare
+        </span>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          style={{ borderColor: '#fff' }}
+        >
+          <span className="navbar-toggler-icon" style={{ filter: 'invert(1)' }}></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+            {sections.map((section) => (
+              <li className="nav-item" key={section.id}>
+                <span
+                  className={`nav-link nav-animated-link${activeSection === section.id ? ' active' : ''}`}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => scrollToSection(section.id)}
+                >
+                  {section.label}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {/* Add spacing between navlinks and buttons */}
+          <div className="d-flex ms-lg-4 mt-3 mt-lg-0">
+            <button
+              className="btn portal-btn mx-2"
+              onClick={handleCustomerPortal}
+            >
+              Customer Portal
+            </button>
+            <button
+              className="btn portal-btn mx-2"
+              onClick={handleProviderPortal}
+            >
+              Provider Portal
+            </button>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
   );
 };
 
