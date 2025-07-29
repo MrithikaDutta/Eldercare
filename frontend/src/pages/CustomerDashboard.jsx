@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Calendar, Heart, Star, Clock, MessageSquare, Bell, Settings, 
   User, Shield, CheckCircle, AlertCircle, Phone, Mail, MapPin, Users,
@@ -7,32 +7,38 @@ import {
 
 const CustomerDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [bookings, setBookings] = useState([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [bookingsError, setBookingsError] = useState(null);
 
-  const stats = {
-    activeServices: 2,
-    totalBookings: 15,
-    favoriteProviders: 3,
-    monthlySpent: 1250
-  };
-
-  const activeServices = [
-    {
-      id: 1,
-      provider: "Sarah Johnson",
-      service: "Personal Care",
-      nextAppointment: "2025-01-15",
-      time: "10:00 AM",
-      rating: 4.9,
-    },
-    {
-      id: 2,
-      provider: "Maria Rodriguez",
-      service: "Companionship",
-      nextAppointment: "2025-01-16",
-      time: "2:00 PM",
-      rating: 4.8,
+  useEffect(() => {
+    if (activeTab === 'services') {
+      setLoadingBookings(true);
+      setBookingsError(null);
+      const access = localStorage.getItem('access');
+      fetch('http://localhost:8000/api/bookings/customer/', {
+        headers: {
+          'Authorization': access ? `Bearer ${access}` : undefined,
+        },
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch bookings');
+          return res.json();
+        })
+        .then(data => setBookings(data))
+        .catch(err => setBookingsError(err.message))
+        .finally(() => setLoadingBookings(false));
     }
-  ];
+  }, [activeTab]);
+
+
+  // Calculate stats from bookings
+  const stats = {
+    activeServices: bookings.length,
+    totalBookings: bookings.length,
+    favoriteProviders: 0, // Not available from API
+    monthlySpent: 0 // Not available from API
+  };
 
   const processSteps = [
     {
@@ -112,26 +118,7 @@ const CustomerDashboard = () => {
     }
   ];
 
-  const recentActivity = [
-    {
-      type: "booking",
-      message: "Appointment confirmed with Sarah Johnson",
-      time: "2 hours ago",
-      icon: <CheckCircle />
-    },
-    {
-      type: "message",
-      message: "New message from Maria Rodriguez",
-      time: "5 hours ago",
-      icon: <MessageSquare />
-    },
-    {
-      type: "review",
-      message: "Please review your recent service",
-      time: "1 day ago",
-      icon: <Star />
-    }
-  ];
+
 
   return (
     <div className="dashboard-page">
@@ -231,27 +218,26 @@ const CustomerDashboard = () => {
                 <div className="dashboard-section">
                   <h2>Active Services</h2>
                   <div className="services-grid">
-                    {activeServices.map(service => (
-                      <div key={service.id} className="service-card">
+                    {bookings.length === 0 && <div>No active bookings found.</div>}
+                    {bookings.slice(0, 3).map((booking, idx) => (
+                      <div key={idx} className="service-card">
                         <div className="service-provider">
                           <div className="provider-avatar-small">
-                            <div className="provider-avatar-small">
-                              <User size={30} />
-                            </div>
+                            <User size={30} />
                           </div>
                           <div className="provider-info">
-                            <h4>{service.provider}</h4>
-                            <p>{service.service}</p>
+                            <h4>Provider ID: {booking.service_provider}</h4>
+                            <p>Date: {booking.date}</p>
                             <div className="rating">
                               <Star className="star filled" />
-                              <span>{service.rating}</span>
+                              <span>{booking.time}</span>
                             </div>
                           </div>
                         </div>
                         <div className="service-details">
                           <div className="next-appointment">
                             <Calendar size={16} />
-                            <span>Next: {service.nextAppointment} at {service.time}</span>
+                            <span>Time: {booking.time}</span>
                           </div>
                           <div className="service-actions">
                             <button className="btn btn-secondary">
@@ -272,12 +258,13 @@ const CustomerDashboard = () => {
                 <div className="dashboard-section">
                   <h2>Recent Activity</h2>
                   <div className="activity-list">
-                    {recentActivity.map((activity, index) => (
-                      <div key={index} className="activity-item">
-                        <div className="activity-icon">{activity.icon}</div>
+                    {bookings.length === 0 && <div>No recent activity.</div>}
+                    {bookings.slice(0, 3).map((booking, idx) => (
+                      <div key={idx} className="activity-item">
+                        <div className="activity-icon"><CheckCircle /></div>
                         <div className="activity-content">
-                          <p>{activity.message}</p>
-                          <span className="activity-time">{activity.time}</span>
+                          <p>Booking with Provider ID: {booking.service_provider} on {booking.date} at {booking.time}</p>
+                          <span className="activity-time">{booking.message}</span>
                         </div>
                       </div>
                     ))}
@@ -392,18 +379,20 @@ const CustomerDashboard = () => {
                 </div>
 
                 <div className="services-list">
-                  {activeServices.map(service => (
-                    <div key={service.id} className="service-detail-card">
+                  {loadingBookings && <div>Loading bookings...</div>}
+                  {bookingsError && <div className="error-message">{bookingsError}</div>}
+                  {!loadingBookings && !bookingsError && bookings.length === 0 && (
+                    <div>No bookings found.</div>
+                  )}
+                  {!loadingBookings && !bookingsError && bookings.map((booking, idx) => (
+                    <div key={idx} className="service-detail-card">
                       <div className="service-header">
                         <div className="provider-profile">
-                          <img src={service.image} alt={service.provider} />
+                          <User size={30} />
                           <div>
-                            <h4>{service.provider}</h4>
-                            <p>{service.service}</p>
-                            <div className="rating">
-                              <Star className="star filled" />
-                              <span>{service.rating}</span>
-                            </div>
+                            <h4>Provider ID: {booking.service_provider}</h4>
+                            <p>Date: {booking.date}</p>
+                            <p>Time: {booking.time}</p>
                           </div>
                         </div>
                         <div className="service-status">
@@ -412,26 +401,9 @@ const CustomerDashboard = () => {
                       </div>
                       <div className="service-details">
                         <div className="detail-item">
-                          <Calendar size={16} />
-                          <span>Next appointment: {service.nextAppointment}</span>
-                        </div>
-                        <div className="detail-item">
-                          <Clock size={16} />
-                          <span>Time: {service.time}</span>
-                        </div>
-                      </div>
-                      <div className="service-actions">
-                        <button className="btn btn-secondary">
                           <MessageSquare size={16} />
-                          Message Provider
-                        </button>
-                        <button className="btn btn-secondary">
-                          <Calendar size={16} />
-                          Reschedule
-                        </button>
-                        <button className="btn btn-primary">
-                          View Full Details
-                        </button>
+                          <span>Message: {booking.message}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
