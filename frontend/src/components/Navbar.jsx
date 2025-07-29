@@ -1,111 +1,95 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const sections = [
-  { id: 'hero', label: 'Home' },
-  { id: 'about', label: 'About' },
-  { id: 'howitworks', label: 'How it Works' },
-  { id: 'testimonials', label: 'Testimonials' },
-];
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, Heart, User, LogOut } from 'lucide-react';
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('hero');
 
-  // Smooth scroll to section
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // Listen to scroll and update active section
   useEffect(() => {
-    const handleScroll = () => {
-      let current = 'hero';
-      for (const section of sections) {
-        const el = document.getElementById(section.id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= 80) {
-            current = section.id;
-          }
-        }
-      }
-      setActiveSection(current);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    setIsLoggedIn(!!localStorage.getItem('access'));
+  }, [location]);
 
-  const handleCustomerPortal = () => {
-    navigate('/customer');
+  const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    setIsLoggedIn(false);
+    setShowProfileMenu(false);
+    navigate('/login');
   };
-
-  const handleProviderPortal = () => {
-    navigate('/provider');
-  };
-
   return (
-    <nav
-      className="navbar navbar-expand-lg shadow-sm"
-      style={{
-        backgroundColor: 'var(--primary)',
-        color: '#005acd',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-      }}
-    >
-      <div className="container">
-        <span
-          className="navbar-brand fw-bold"
-          style={{ cursor: 'pointer', color: '#fff', fontSize: '1.5rem' }}
-          onClick={() => navigate('/')}
-        >
-          Eldercare
-        </span>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          style={{ borderColor: '#fff' }}
-        >
-          <span className="navbar-toggler-icon" style={{ filter: 'invert(1)' }}></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-            {sections.map((section) => (
-              <li className="nav-item" key={section.id}>
-                <span
-                  className={`nav-link nav-animated-link${activeSection === section.id ? ' active' : ''}`}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => scrollToSection(section.id)}
-                >
-                  {section.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {/* Add spacing between navlinks and buttons */}
-          <div className="d-flex ms-lg-4 mt-3 mt-lg-0">
-            <button
-              className="btn portal-btn mx-2"
-              onClick={handleCustomerPortal}
-            >
-              Customer Portal
-            </button>
-            <button
-              className="btn portal-btn mx-2"
-              onClick={handleProviderPortal}
-            >
-              Provider Portal
-            </button>
-          </div>
+    <nav className="navbar">
+      <div className="nav-container">
+        <Link to="/" className="nav-logo">
+          <Heart className="logo-icon" />
+          <span>ElderCare Companions</span>
+        </Link>
+        
+        <div className={`nav-menu ${isOpen ? 'active' : ''}`}>
+          <Link 
+            to="/" 
+            className={`nav-link ${isActive('/') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            Home
+          </Link>
+          <Link 
+            to="/about" 
+            className={`nav-link ${isActive('/about') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            About Us
+          </Link>
+          <Link 
+            to="/services" 
+            className={`nav-link ${isActive('/services') ? 'active' : ''}`}
+            onClick={() => setIsOpen(false)}
+          >
+            Services
+          </Link>
+        </div>
+        
+        <div className="nav-auth">
+          {isLoggedIn ? (
+            <div className="profile-dropdown">
+              <button 
+                className="profile-button"
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+              >
+                <User className="profile-icon" />
+              </button>
+              {showProfileMenu && (
+                <div className="profile-menu">
+                  <Link to="/profile" className="profile-menu-item">
+                    <User size={16} />
+                    My Profile
+                  </Link>
+                  <Link to="/customer-dashboard" className="profile-menu-item">
+                    <Heart size={16} />
+                    My Dashboard
+                  </Link>
+                  <button onClick={handleLogout} className="profile-menu-item logout">
+                    <LogOut size={16} />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <Link to="/login" className="auth-btn login-btn">Login</Link>
+              <Link to="/register" className="auth-btn register-btn">Sign Up</Link>
+            </div>
+          )}
+        </div>
+        
+        <div className="nav-toggle" onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? <X /> : <Menu />}
         </div>
       </div>
     </nav>

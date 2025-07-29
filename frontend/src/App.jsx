@@ -1,28 +1,40 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import Landing from './screens/Landing';
-import CustomerLanding from './screens/CustomerLanding';
-import ProviderLanding from './screens/ProviderLanding';
-import CustomerDashboard from './screens/CustomerDashboard';
-import ProviderDashboard from './screens/ProviderDashboard';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import About from './pages/About';
+import Services from './pages/Services';
+import ServiceDetail from './pages/ServiceDetail';
+import ServiceCard from './components/ServiceCard.jsx';
+import CategoryFilter from './components/CategoryFilter.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import Profile from './pages/Profile.jsx';
+import ProviderDashboard from "./pages/ProviderDashboard.jsx";
+import CustomerDashboard from "./pages/CustomerDashboard.jsx";
 
-const App = () => {
+function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/customer" element={<CustomerLanding />} />
-          <Route path="/provider" element={<ProviderLanding />} />
-          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-          <Route path="/provider/dashboard" element={<ProviderDashboard />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/service/:id" element={<ServiceDetail />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/provider-dashboard" element={<ProviderDashboard />} />
+            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
-};
+}
 
 export default App;
