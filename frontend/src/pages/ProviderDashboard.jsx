@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Calendar, Users, Star, DollarSign, Clock, MessageSquare, 
   Bell, Settings, TrendingUp, CheckCircle, AlertCircle, 
@@ -8,44 +8,37 @@ import {
 const ProviderDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
-  const stats = {
-    totalClients: 12,
-    activeBookings: 8,
-    monthlyEarnings: 3250,
-    rating: 4.9,
-    completedServices: 156,
-    responseRate: 98
-  };
+  const [bookings, setBookings] = useState([]);
+  const [loadingBookings, setLoadingBookings] = useState(false);
+  const [bookingsError, setBookingsError] = useState(null);
 
-  const recentBookings = [
-    {
-      id: 1,
-      client: "Mary Johnson",
-      service: "Personal Care",
-      date: "2025-01-15",
-      time: "10:00 AM",
-      status: "confirmed",
-      duration: "3 hours"
-    },
-    {
-      id: 2,
-      client: "Robert Smith",
-      service: "Companionship",
-      date: "2025-01-16",
-      time: "2:00 PM",
-      status: "pending",
-      duration: "4 hours"
-    },
-    {
-      id: 3,
-      client: "Patricia Wilson",
-      service: "Medical Support",
-      date: "2025-01-17",
-      time: "9:00 AM",
-      status: "confirmed",
-      duration: "2 hours"
-    }
-  ];
+  useEffect(() => {
+    setLoadingBookings(true);
+    setBookingsError(null);
+    const access = localStorage.getItem('access');
+    fetch('http://localhost:8000/api/bookings/provider/', {
+      headers: {
+        'Authorization': access ? `Bearer ${access}` : undefined,
+      },
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch bookings');
+        return res.json();
+      })
+      .then(data => setBookings(data))
+      .catch(err => setBookingsError(err.message))
+      .finally(() => setLoadingBookings(false));
+  }, []);
+
+  // Calculate stats from bookings
+  const stats = {
+    totalClients: [...new Set(bookings.map(b => b.customer?.id))].length,
+    activeBookings: bookings.length,
+    monthlyEarnings: 0, // Not available from API
+    rating: 0, // Not available from API
+    completedServices: 0, // Not available from API
+    responseRate: 0 // Not available from API
+  };
 
   const processSteps = [
     {
@@ -223,20 +216,22 @@ const ProviderDashboard = () => {
                 <div className="dashboard-section">
                   <h2>Recent Bookings</h2>
                   <div className="bookings-list">
-                    {recentBookings.map(booking => (
+                    {loadingBookings && <div>Loading bookings...</div>}
+                    {bookingsError && <div className="error-message">{bookingsError}</div>}
+                    {!loadingBookings && !bookingsError && bookings.length === 0 && (
+                      <div>No bookings found.</div>
+                    )}
+                    {!loadingBookings && !bookingsError && bookings.slice(0, 3).map(booking => (
                       <div key={booking.id} className="booking-item">
                         <div className="booking-info">
-                          <h4>{booking.client}</h4>
-                          <p>{booking.service}</p>
+                          <h4>{booking.customer?.username}</h4>
+                          <p>{booking.message}</p>
                           <div className="booking-details">
                             <span>{booking.date} at {booking.time}</span>
-                            <span>{booking.duration}</span>
                           </div>
                         </div>
                         <div className="booking-status">
-                          <span className={`status-badge ${booking.status}`}>
-                            {booking.status}
-                          </span>
+                          <span className="status-badge confirmed">Confirmed</span>
                           <div className="booking-actions">
                             <button className="btn-icon">
                               <Phone size={16} />
@@ -359,13 +354,16 @@ const ProviderDashboard = () => {
                 </div>
 
                 <div className="bookings-list detailed">
-                  {recentBookings.map(booking => (
+                  {loadingBookings && <div>Loading bookings...</div>}
+                  {bookingsError && <div className="error-message">{bookingsError}</div>}
+                  {!loadingBookings && !bookingsError && bookings.length === 0 && (
+                    <div>No bookings found.</div>
+                  )}
+                  {!loadingBookings && !bookingsError && bookings.map(booking => (
                     <div key={booking.id} className="booking-card">
                       <div className="booking-header">
-                        <h4>{booking.client}</h4>
-                        <span className={`status-badge ${booking.status}`}>
-                          {booking.status}
-                        </span>
+                        <h4>{booking.customer?.username}</h4>
+                        <span className="status-badge confirmed">Confirmed</span>
                       </div>
                       <div className="booking-details">
                         <div className="detail-item">
@@ -374,11 +372,11 @@ const ProviderDashboard = () => {
                         </div>
                         <div className="detail-item">
                           <Clock size={16} />
-                          <span>{booking.time} ({booking.duration})</span>
+                          <span>{booking.time}</span>
                         </div>
                         <div className="detail-item">
                           <Heart size={16} />
-                          <span>{booking.service}</span>
+                          <span>{booking.message}</span>
                         </div>
                       </div>
                       <div className="booking-actions">
