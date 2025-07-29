@@ -60,12 +60,16 @@ const Login = () => {
 
       if (!res.ok) throw new Error(data?.detail || 'Login failed');
 
+
       if (data.tokens) {
         localStorage.setItem('access', data.tokens.access);
         localStorage.setItem('refresh', data.tokens.refresh);
       }
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
 
-      navigate('/customer-dashboard'); // or provider-dashboard based on user type
+      navigate('/dashboard');
 
     } catch (error) {
       setErrors({ submit: error.message || 'Login failed. Please try again.' });

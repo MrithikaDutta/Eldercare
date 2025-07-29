@@ -68,17 +68,16 @@ const Register = () => {
       const data = await res.json();
       console.log('Register response:', data);
       if (!res.ok) throw new Error(data?.detail || 'Registration failed');
-      // Save tokens to localStorage
+      // Save tokens and user to localStorage
       if (data.tokens) {
         localStorage.setItem('access', data.tokens.access);
         localStorage.setItem('refresh', data.tokens.refresh);
       }
-      // Redirect to appropriate dashboard based on role
-      if (role === 'customer') {
-        navigate('/customer-dashboard');
-      } else {
-        navigate('/provider-dashboard');
+      if (data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user));
       }
+      // Redirect to dashboard (auto-routes by user type)
+      navigate('/dashboard');
     } catch (error) {
       setErrors({ submit: error.message || 'Registration failed. Please try again.' });
     } finally {

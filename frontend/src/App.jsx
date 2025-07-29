@@ -10,8 +10,7 @@ import CategoryFilter from './components/CategoryFilter.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Profile from './pages/Profile.jsx';
-import ProviderDashboard from "./pages/ProviderDashboard.jsx";
-import CustomerDashboard from "./pages/CustomerDashboard.jsx";
+import DashboardRouter from "./components/DashboardRouter.jsx";
 
 function App() {
   return (
@@ -27,8 +26,9 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/provider-dashboard" element={<ProviderDashboard />} />
-            <Route path="/customer-dashboard" element={<CustomerDashboard />} />
+            <Route path="/dashboard" element={<DashboardRouter />} />
+            <Route path="/customer-dashboard" element={<DashboardRouter />} />
+            <Route path="/provider-dashboard" element={<DashboardRouter />} />
           </Routes>
         </main>
         <Footer />
