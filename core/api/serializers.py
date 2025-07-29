@@ -23,5 +23,21 @@ class BookingSerializer(serializers.ModelSerializer):
     
 
 
+class ViewBookingSerializer(serializers.ModelSerializer):
+    customer = ServiceProviderSerializer(read_only=True)
+    service_provider = ServiceProviderSerializer(read_only=True)
+    service_provider_id = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all(), write_only=True, source='service_provider')
+
+    class Meta:
+        model = Bookings
+        fields = ('id','customer', 'service_provider', 'service_provider_id', 'date', 'time', 'message')
+        extra_kwargs = {
+            'customer': {'read_only': True},
+            'service_provider': {'read_only': True},
+        }
+
+    def create(self, validated_data):
+        validated_data['customer'] = self.context['request'].user
+        return super().create(validated_data)
 
 

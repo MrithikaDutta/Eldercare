@@ -1,106 +1,64 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ServiceCard from '../components/ServiceCard';
 import CategoryFilter from '../components/CategoryFilter';
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [serviceProviders, setServiceProviders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const serviceProviders = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      category: "personal-care",
-      specialty: "Personal Care Specialist",
-      rating: 4.9,
-      reviews: 127,
-      location: "Downtown Area",
-      experience: "8 years",
-      hourlyRate: "$25-35",
-      services: ["Bathing Assistance", "Medication Management", "Mobility Support"],
-      availability: "Mon-Fri, 7AM-7PM",
-      description: "Certified nursing assistant with extensive experience in personal care and medication management."
-    },
-    {
-      id: 2,
-      name: "Maria Rodriguez",
-      category: "companionship",
-      specialty: "Companion Caregiver",
-      rating: 4.8,
-      reviews: 89,
-      location: "Westside",
-      experience: "6 years",
-      hourlyRate: "$20-30",
-      services: ["Social Companionship", "Light Housekeeping", "Meal Preparation"],
-      availability: "7 days a week, flexible hours",
-      description: "Warm and caring companion who specializes in providing emotional support and social interaction."
-    },
-    {
-      id: 3,
-      name: "Dr. Michael Chen",
-      category: "medical",
-      specialty: "Medical Care Provider",
-      rating: 5.0,
-      reviews: 156,
-      location: "Medical District",
-      experience: "15 years",
-      hourlyRate: "$45-65",
-      services: ["Health Monitoring", "Medical Appointments", "Chronic Disease Management"],
-      availability: "Mon-Fri, 8AM-6PM",
-      description: "Licensed physician specializing in geriatric medicine and home healthcare services."
-    },
-    {
-      id: 4,
-      name: "Jennifer Williams",
-      category: "household",
-      specialty: "Household Support",
-      rating: 4.7,
-      reviews: 73,
-      location: "Eastside",
-      experience: "5 years",
-      hourlyRate: "$18-28",
-      services: ["Housekeeping", "Grocery Shopping", "Laundry"],
-      availability: "Mon-Sat, 9AM-5PM",
-      description: "Reliable household support specialist who helps maintain a clean and organized living environment."
-    },
-    {
-      id: 5,
-      name: "Robert Thompson",
-      category: "transportation",
-      specialty: "Transportation Services",
-      rating: 4.9,
-      reviews: 94,
-      location: "City-wide",
-      experience: "10 years",
-      hourlyRate: "$22-32",
-      services: ["Medical Appointments", "Shopping Trips", "Social Outings"],
-      availability: "7 days a week, 6AM-10PM",
-      description: "Professional driver with specialized training in senior transportation and mobility assistance."
-    },
-    {
-      id: 6,
-      name: "Lisa Anderson",
-      category: "personal-care",
-      specialty: "Certified Nursing Assistant",
-      rating: 4.8,
-      reviews: 112,
-      location: "Northside",
-      experience: "12 years",
-      hourlyRate: "$28-38",
-      services: ["Personal Hygiene", "Physical Therapy Support", "Wound Care"],
-      availability: "24/7 availability",
-      description: "Experienced CNA with specialization in post-surgical care and rehabilitation support."
-    }
-  ];
+  useEffect(() => {
+    const fetchServiceProviders = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8000/api/service-providers/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch service providers');
+        }
+        const data = await response.json();
+        console.log('Service providers:', data);
+        setServiceProviders(data);
+      } catch (err) {
+        console.error('Error fetching service providers:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServiceProviders();
+  }, []);
 
   const filteredProviders = useMemo(() => {
     return selectedCategory === 'all' 
       ? serviceProviders 
       : serviceProviders.filter(provider => provider.category === selectedCategory);
-  }, [selectedCategory]);
+  }, [selectedCategory, serviceProviders]);
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
   };
+
+  if (loading) {
+    return (
+      <div className="services-page">
+        <div className="container">
+          <div className="loading-spinner">Loading service providers...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="services-page">
+        <div className="container">
+          <div className="error-message">Error: {error}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="services-page">
@@ -126,11 +84,17 @@ const Services = () => {
       {/* Service Providers Grid */}
       <section className="providers-section">
         <div className="container">
-          <div className="providers-grid">
-            {filteredProviders.map(provider => (
-              <ServiceCard key={provider.id} provider={provider} />
-            ))}
-          </div>
+          {serviceProviders.length === 0 ? (
+            <div className="no-providers">
+              <p>No service providers available at the moment.</p>
+            </div>
+          ) : (
+            <div className="providers-grid">
+              {filteredProviders.map(provider => (
+                <ServiceCard key={provider.id} provider={provider} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

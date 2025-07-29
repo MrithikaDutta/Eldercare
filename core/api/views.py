@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from accounts.models import CustomUser
 from .models import Bookings
-from .serializers import ServiceProviderSerializer, BookingSerializer
+from .serializers import ServiceProviderSerializer, BookingSerializer, ViewBookingSerializer
 
 
 
@@ -58,7 +58,7 @@ class ProviderBookingView(APIView):
 
     def get(self, request):
         bookings = Bookings.objects.filter(service_provider=request.user)
-        serializer = BookingSerializer(bookings, many=True)
+        serializer = ViewBookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
 
